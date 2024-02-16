@@ -4,10 +4,10 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name="materialbom_data",schema = "analytics_data")
+@Table(name="materialbom_data",schema = "iocl")
 public class MaterialBomEntity {
     @Id
-    @SequenceGenerator(name = "MaterialBom_Data", sequenceName = "analytics_data.materialbom_data_mat_bom_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "MaterialBom_Data", sequenceName = "iocl.materialbom_data_mat_bom_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MaterialBom_Data")
 
     private Long mat_bom_id;

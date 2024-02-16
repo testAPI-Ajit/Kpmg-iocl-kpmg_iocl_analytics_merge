@@ -12,10 +12,10 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "formulation_cost_base_import", schema = "analytics_data")
+@Table(name = "formulation_cost_base_import", schema = "iocl")
 public class PoImport {
 	@Id
-	@SequenceGenerator(name = "PoImportseq", sequenceName = "analytics_data.formulation_cost_base_import_seq", allocationSize = 1)
+	@SequenceGenerator(name = "PoImportseq", sequenceName = "iocl.formulation_cost_base_import_seq", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PoImportseq")
 	private Long poi_id;
 	private String product_code;

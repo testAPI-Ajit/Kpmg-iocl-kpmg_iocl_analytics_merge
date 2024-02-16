@@ -13,10 +13,10 @@ import javax.persistence.Transient;
 
 @Entity
 
-@Table(name = "formulation_cost_addt_import", schema = "analytics_data")
+@Table(name = "formulation_cost_addt_import", schema = "iocl")
 public class CostAddTImport {
 	@Id
-	@SequenceGenerator(name = "CostAddTImportseq", sequenceName = "analytics_data.pricing_tool.formulation_cost_addt_import_import_cost_id_seq", allocationSize = 1)
+	@SequenceGenerator(name = "CostAddTImportseq", sequenceName = "iocl.pricing_tool.formulation_cost_addt_import_import_cost_id_seq", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CostAddTImportseq")
 	@Column(name = "import_cost_id")
 	private Long cost_addt_import_id;

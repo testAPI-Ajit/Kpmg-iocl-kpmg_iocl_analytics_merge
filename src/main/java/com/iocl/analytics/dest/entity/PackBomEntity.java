@@ -4,10 +4,10 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name="packbom_data",schema = "analytics_data")
+@Table(name="packbom_data",schema = "iocl")
 public class PackBomEntity {
     @Id
-    @SequenceGenerator(name = "PackBom_Data", sequenceName = "analytics_data.packbom_data_pack_bom_id_seq" , allocationSize = 1)
+    @SequenceGenerator(name = "PackBom_Data", sequenceName = "iocl.packbom_data_pack_bom_id_seq" , allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PackBom_Data")
 
     private Long pack_bom_id;

@@ -12,10 +12,10 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "packaging_input_cost", schema = "analytics_data")
+@Table(name = "packaging_input_cost", schema = "iocl")
 public class PackagingCost {
 	@Id
-	@SequenceGenerator(name = "PackagingCostSeq", sequenceName = "analytics_data.packaging_cost_seq", allocationSize = 1)
+	@SequenceGenerator(name = "PackagingCostSeq", sequenceName = "iocl.packaging_cost_seq", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PackagingCostSeq")
 	@Column(name = "pkg_cost_id")
 	private Long packaging_cost_id;
