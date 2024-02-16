@@ -609,6 +609,7 @@ public class AnalyticsServicesImpl implements AnalyticsServices {
 						dateFormat.parse(startAndEndDayMap.get(AnalyticsConstant.START_DATE_OF_NEXT_MONTH)));
 				matDtoData
 						.setValid_to(dateFormat.parse(startAndEndDayMap.get(AnalyticsConstant.END_DATE_OF_NEXT_MONTH)));
+
 				matDtoData.setCreated_on(dateFormat.parse(startAndEndDayMap.get(AnalyticsConstant.CURRENT_DATE)));
 
 				if (!matDtoData.getFinish_product().endsWith("000")) {
@@ -616,7 +617,7 @@ public class AnalyticsServicesImpl implements AnalyticsServices {
 					logger.info("mat id " + matDtoData.getFinish_product());
 					matPackBomDtoListNotEndWithThreeZero = analyticsRepo.getMatPackBomDto(matDtoData.getFinish_product(), matDtoData.getPlant(),pageable);
 
-					if (matPackBomDtoListNotEndWithThreeZero != null && !matPackBomDtoListNotEndWithThreeZero.isEmpty()) {
+					if (matPackBomDtoListNotEndWithThreeZero != null && matPackBomDtoListNotEndWithThreeZero.size() > 0) {
 						matReturnWithNotZero = transformData(matPackBomDtoListNotEndWithThreeZero, matDtoData);
 						matPackBomDtoListNotEndWithThreeZeroData.add(matReturnWithNotZero);
 						logger.info("Plant details in Pack " + matReturnWithNotZero);
@@ -667,8 +668,9 @@ public class AnalyticsServicesImpl implements AnalyticsServices {
 
 				matDtoData.setValid_from(
 						dateFormat.parse(startAndEndDayMap.get(AnalyticsConstant.START_DATE_OF_NEXT_MONTH)));
-				matDtoData
-						.setValid_to(dateFormat.parse(startAndEndDayMap.get(AnalyticsConstant.END_DATE_OF_NEXT_MONTH)));
+				matDtoData.setValid_to(
+						dateFormat.parse(startAndEndDayMap.get(AnalyticsConstant.END_DATE_OF_NEXT_MONTH)));
+
 				matDtoData.setCreated_on(dateFormat.parse(startAndEndDayMap.get(AnalyticsConstant.CURRENT_DATE)));
 
 				if (matDtoData.getFinish_product().endsWith("000")) {
@@ -677,7 +679,7 @@ public class AnalyticsServicesImpl implements AnalyticsServices {
 
 					matPackBomDtoListEndWithThreeZero = analyticsRepo.getMatPackBomDtoForMaterialEndsWithZero(matDtoData.getFinish_product(), matDtoData.getPlant(),pgReq);
 
-					if (matPackBomDtoListEndWithThreeZero!= null && !matPackBomDtoListEndWithThreeZero.isEmpty() ){
+					if (matPackBomDtoListEndWithThreeZero!= null && matPackBomDtoListEndWithThreeZero.size() >0){
 						matReturnWithZero = transformData(matPackBomDtoListEndWithThreeZero, matDtoData);
 						matPackBomDtoListEndWithThreeZeroData.add(matReturnWithZero);
 					}
@@ -754,12 +756,14 @@ public class AnalyticsServicesImpl implements AnalyticsServices {
 			if (!matPackBomDtoList.isEmpty()) {
 				secondTableEntity = new MatPacBomDto();
 				for (int i = 0; i < matPackBomDtoList.size(); i++) {
-					if (i == 0) {
 						secondTableEntity.setFinish_product(matDtoData.getFinish_product());
 						secondTableEntity.setPlant(matDtoData.getPlant());
+						secondTableEntity.setValid_from(matDtoData.getValid_from());
+						secondTableEntity.setValid_to(matDtoData.getValid_to());
+						secondTableEntity.setCreated_on(matDtoData.getCreated_on());
 						secondTableEntity.setFnsd_by_qty(matPackBomDtoList.get(i).getFnsd_by_qty());
 						secondTableEntity.setUOM(matPackBomDtoList.get(i).getUOM());
-					}
+
 					if (i <= 15) {
 
 						switch (i) {
@@ -767,77 +771,92 @@ public class AnalyticsServicesImpl implements AnalyticsServices {
 								secondTableEntity.setSno1(matPackBomDtoList.get(i).getSno1());
 								secondTableEntity.setQty1(matPackBomDtoList.get(i).getQty1());
 								secondTableEntity.setUom1(matPackBomDtoList.get(i).getUom1());
+
 								break;
 							case 1:
 								secondTableEntity.setSno2(matPackBomDtoList.get(i).getSno1());
 								secondTableEntity.setQty2(matPackBomDtoList.get(i).getQty1());
 								secondTableEntity.setUom2(matPackBomDtoList.get(i).getUom1());
+
 								break;
 							case 2:
 								secondTableEntity.setSno3(matPackBomDtoList.get(i).getSno1());
 								secondTableEntity.setQty3(matPackBomDtoList.get(i).getQty1());
 								secondTableEntity.setUom3(matPackBomDtoList.get(i).getUom1());
+
 								break;
 							// Add cases for columns 4 to 15
 							case 3:
 								secondTableEntity.setSno4(matPackBomDtoList.get(i).getSno1());
 								secondTableEntity.setQty4(matPackBomDtoList.get(i).getQty1());
 								secondTableEntity.setUom4(matPackBomDtoList.get(i).getUom1());
+
 								break;
 							case 4:
 								secondTableEntity.setSno5(matPackBomDtoList.get(i).getSno1());
 								secondTableEntity.setQty5(matPackBomDtoList.get(i).getQty1());
 								secondTableEntity.setUom5(matPackBomDtoList.get(i).getUom1());
+
 								break;
 							case 5:
 								secondTableEntity.setSno6(matPackBomDtoList.get(i).getSno1());
 								secondTableEntity.setQty6(matPackBomDtoList.get(i).getQty1());
 								secondTableEntity.setUom6(matPackBomDtoList.get(i).getUom1());
+
 								break;
 							case 6:
 								secondTableEntity.setSno7(matPackBomDtoList.get(i).getSno1());
 								secondTableEntity.setQty7(matPackBomDtoList.get(i).getQty1());
 								secondTableEntity.setUom7(matPackBomDtoList.get(i).getUom1());
+
 								break;
 							case 7:
 								secondTableEntity.setSno8(matPackBomDtoList.get(i).getSno1());
 								secondTableEntity.setQty8(matPackBomDtoList.get(i).getQty1());
 								secondTableEntity.setUom8(matPackBomDtoList.get(i).getUom1());
+
 								break;
 							case 8:
 								secondTableEntity.setSno9(matPackBomDtoList.get(i).getSno1());
 								secondTableEntity.setQty9(matPackBomDtoList.get(i).getQty1());
 								secondTableEntity.setUom9(matPackBomDtoList.get(i).getUom1());
+
 								break;
 							case 9:
 								secondTableEntity.setSno10(matPackBomDtoList.get(i).getSno1());
 								secondTableEntity.setQty10(matPackBomDtoList.get(i).getQty1());
 								secondTableEntity.setUom10(matPackBomDtoList.get(i).getUom1());
+
 								break;
 							case 10:
 								secondTableEntity.setSno11(matPackBomDtoList.get(i).getSno1());
 								secondTableEntity.setQty11(matPackBomDtoList.get(i).getQty1());
 								secondTableEntity.setUom11(matPackBomDtoList.get(i).getUom1());
+
 								break;
 							case 11:
 								secondTableEntity.setSno12(matPackBomDtoList.get(i).getSno1());
 								secondTableEntity.setQty12(matPackBomDtoList.get(i).getQty1());
 								secondTableEntity.setUom12(matPackBomDtoList.get(i).getUom1());
+
 								break;
 							case 12:
 								secondTableEntity.setSno13(matPackBomDtoList.get(i).getSno1());
 								secondTableEntity.setQty13(matPackBomDtoList.get(i).getQty1());
 								secondTableEntity.setUom13(matPackBomDtoList.get(i).getUom1());
+
 								break;
 							case 13:
 								secondTableEntity.setSno14(matPackBomDtoList.get(i).getSno1());
 								secondTableEntity.setQty14(matPackBomDtoList.get(i).getQty1());
 								secondTableEntity.setUom14(matPackBomDtoList.get(i).getUom1());
+
 								break;
 							case 14:
 								secondTableEntity.setSno15(matPackBomDtoList.get(i).getSno1());
 								secondTableEntity.setQty15(matPackBomDtoList.get(i).getQty1());
 								secondTableEntity.setUom15(matPackBomDtoList.get(i).getUom1());
+
 								break;
 							// Add more cases for additional columns as needed
 							default:
