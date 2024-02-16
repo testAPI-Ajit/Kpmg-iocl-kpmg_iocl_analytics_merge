@@ -489,10 +489,6 @@ public class AnalyticsServicesImpl implements AnalyticsServices {
 			List<String> plantList = analyticsRepo.getPlantsByMaterialType(AnalyticsConstant.MATERIAL_TYPE); // MATERIAL_TYPE
 			logger.info("plant List :: " + plantList.size());
 
-//			Map<String, String> prevStartAndEndDayMap = getDate.previuosMonthDateMap();
-//			String start_date = prevStartAndEndDayMap.get(AnalyticsConstant.START_DATE_OF_PREV_MONTH);
-//			String end_date = prevStartAndEndDayMap.get(AnalyticsConstant.END_DATE_OF_PREV_MONTH);
-
 			String start_date = "2022-03-10";
 			String end_date = "2022-06-30";
 			List<AddtPoEntity> poiDataList = analyticsRepo.getPoiDataListFromHois(plantList,
@@ -578,6 +574,7 @@ public class AnalyticsServicesImpl implements AnalyticsServices {
 // ----------------------------------Fetch HOIS Data for Pack Type-----------------
 	@Override
 	public List<MatPacBomDto> getPacBomFrmHois() {
+		GetDate getDate = new GetDate();
 
 		MatPacBomDto matDtoData = new MatPacBomDto();
 		MatPacBomDto matUOMDataDto = new MatPacBomDto();
@@ -594,14 +591,25 @@ public class AnalyticsServicesImpl implements AnalyticsServices {
 
 		try {
 			PageRequest pageable = PageRequest.of(0, 500);
+
+			Map<String, String> startAndEndDayMap = getDate.neaxtMonthDateMap();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
 			ObjectMapper omaperr = new ObjectMapper();
 			List<MatPacBomDto> materialList = analyticsRepo.getAllMaterials();
 			logger.info("List of materials from Pack table", materialList.size());
 
 			List<String> matlist = new ArrayList<>();
 
+
 			for (MatPacBomDto matDto : materialList) {
 				BeanUtils.copyProperties(matDto, matDtoData);
+
+				matDtoData.setValid_from(
+						dateFormat.parse(startAndEndDayMap.get(AnalyticsConstant.START_DATE_OF_NEXT_MONTH)));
+				matDtoData
+						.setValid_to(dateFormat.parse(startAndEndDayMap.get(AnalyticsConstant.END_DATE_OF_NEXT_MONTH)));
+				matDtoData.setCreated_on(dateFormat.parse(startAndEndDayMap.get(AnalyticsConstant.CURRENT_DATE)));
 
 				if (!matDtoData.getFinish_product().endsWith("000")) {
 
@@ -620,6 +628,67 @@ public class AnalyticsServicesImpl implements AnalyticsServices {
 			logger.error("Error while fetching PACK Data::: " + ex);
 		}
 		return matPackBomDtoListNotEndWithThreeZeroData;
+	}
+
+	//------------------------------------------------Fetch from HOIS for BASE/ADDT TYPE DATA----------------------------------------
+
+	@Override
+	public List<MatPacBomDto> getMatBomFrmHois(){
+
+		GetDate getDate = new GetDate();
+		List<MatPacBomDto> matPacBomDtoList = new ArrayList<>();
+		List<MatPacBomDto> matStllknList = new ArrayList<>();
+
+		MatPacBomDto matDtoData = new MatPacBomDto();
+
+		MatPacBomDto matPackDto = null;
+		ObjectMapper ommaperr = new ObjectMapper();
+		List<MatPacBomDto> matPackBomDtoListEndWithThreeZero = new ArrayList<>();
+		List<MatPacBomDto> matPackBomDtoListNotEndWithThreeZero = new ArrayList<>();
+		MatPacBomDto matReturnWithZero = new MatPacBomDto();
+		MatPacBomDto matReturnWithNotZero = null;
+
+		List<MatPacBomDto> matPackmatReturnWithZeroList = new ArrayList<>();
+		List<MatPacBomDto> matPackmatNotReturnWithZeroList = new ArrayList<>();
+		List<MatPacBomDto> matPackBomDtoListEndWithThreeZeroData = new ArrayList<>();
+		try {
+			PageRequest pgReq = PageRequest.of(0, 500);
+			ObjectMapper omaperr = new ObjectMapper();
+			List<MatPacBomDto> materialList = analyticsRepo.getAllMaterials();
+			logger.info("List of materials from Material table", materialList.size());
+
+			List<String> matlist = new ArrayList<>();
+
+			Map<String, String> startAndEndDayMap = getDate.neaxtMonthDateMap();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+			for (MatPacBomDto matDto : materialList) {
+				BeanUtils.copyProperties(matDto, matDtoData);
+
+				matDtoData.setValid_from(
+						dateFormat.parse(startAndEndDayMap.get(AnalyticsConstant.START_DATE_OF_NEXT_MONTH)));
+				matDtoData
+						.setValid_to(dateFormat.parse(startAndEndDayMap.get(AnalyticsConstant.END_DATE_OF_NEXT_MONTH)));
+				matDtoData.setCreated_on(dateFormat.parse(startAndEndDayMap.get(AnalyticsConstant.CURRENT_DATE)));
+
+				if (matDtoData.getFinish_product().endsWith("000")) {
+					logger.info("mat id for 000:::::   " + matDtoData.getFinish_product());
+					logger.info("Plant ID for 000:::: " + matDtoData.getPlant());
+
+					matPackBomDtoListEndWithThreeZero = analyticsRepo.getMatPackBomDtoForMaterialEndsWithZero(matDtoData.getFinish_product(), matDtoData.getPlant(),pgReq);
+
+					if (matPackBomDtoListEndWithThreeZero!= null && !matPackBomDtoListEndWithThreeZero.isEmpty() ){
+						matReturnWithZero = transformData(matPackBomDtoListEndWithThreeZero, matDtoData);
+						matPackBomDtoListEndWithThreeZeroData.add(matReturnWithZero);
+					}
+
+				}
+
+				}
+		} catch (Exception ex) {
+			logger.error(ex);
+		}
+		return matPackBomDtoListEndWithThreeZeroData;
 	}
 
 	//------Insert into Analytics-----
@@ -675,55 +744,7 @@ public class AnalyticsServicesImpl implements AnalyticsServices {
 
 	//------------------------------------------------Fetch from HOIS for BASE/ADDT TYPE DATA----------------------------------------
 
-	@Override
-	public List<MatPacBomDto> getMatBomFrmHois(){
-		List<MatPacBomDto> matPacBomDtoList = new ArrayList<>();
-		List<MatPacBomDto> matStllknList = new ArrayList<>();
-
-		MatPacBomDto matDtoData = new MatPacBomDto();
-		MatPacBomDto matPackDto = null;
-		ObjectMapper ommaperr = new ObjectMapper();
-		List<MatPacBomDto> matPackBomDtoListEndWithThreeZero = new ArrayList<>();
-		List<MatPacBomDto> matPackBomDtoListNotEndWithThreeZero = new ArrayList<>();
-		MatPacBomDto matReturnWithZero = new MatPacBomDto();
-		MatPacBomDto matReturnWithNotZero = null;
-
-		List<MatPacBomDto> matPackmatReturnWithZeroList = new ArrayList<>();
-		List<MatPacBomDto> matPackmatNotReturnWithZeroList = new ArrayList<>();
-		List<MatPacBomDto> matPackBomDtoListEndWithThreeZeroData = new ArrayList<>();
-		try {
-			PageRequest pgReq = PageRequest.of(0, 500);
-			ObjectMapper omaperr = new ObjectMapper();
-			List<MatPacBomDto> materialList = analyticsRepo.getAllMaterials();
-			logger.info("List of materials from Material table", materialList.size());
-
-			List<String> matlist = new ArrayList<>();
-
-			for (MatPacBomDto matDto : materialList) {
-				BeanUtils.copyProperties(matDto, matDtoData);
-
-				if (matDtoData.getFinish_product().endsWith("000")) {
-					logger.info("mat id for 000:::::   " + matDtoData.getFinish_product());
-					logger.info("Plant ID for 000:::: " + matDtoData.getPlant());
-					//logger.info("mat id " + matDtoData.getFinish_product());
-					matPackBomDtoListEndWithThreeZero = analyticsRepo.getMatPackBomDtoForMaterialEndsWithZero(matDtoData.getFinish_product(), matDtoData.getPlant(),pgReq);
-
-					if (matPackBomDtoListEndWithThreeZero!= null && !matPackBomDtoListEndWithThreeZero.isEmpty() ){
-						matReturnWithZero = transformData(matPackBomDtoListEndWithThreeZero, matDtoData);
-						matPackBomDtoListEndWithThreeZeroData.add(matReturnWithZero);
-					}
-
-				}
-
-
-			}
-		} catch (Exception ex) {
-			logger.error(ex);
-		}
-		return matPackBomDtoListEndWithThreeZeroData;
-	}
-
-public MatPacBomDto transformData(List<MatPacBomDto> matPackBomDtoList, MatPacBomDto matDtoData) {
+	public MatPacBomDto transformData(List<MatPacBomDto> matPackBomDtoList, MatPacBomDto matDtoData) {
 		MatPacBomDto secondTableEntity = null;
 
 		if (matPackBomDtoList != null && matPackBomDtoList.size() > 0) {
@@ -736,7 +757,7 @@ public MatPacBomDto transformData(List<MatPacBomDto> matPackBomDtoList, MatPacBo
 					if (i == 0) {
 						secondTableEntity.setFinish_product(matDtoData.getFinish_product());
 						secondTableEntity.setPlant(matDtoData.getPlant());
-						secondTableEntity.setBy_Qty(matPackBomDtoList.get(i).getBy_Qty());
+						secondTableEntity.setFnsd_by_qty(matPackBomDtoList.get(i).getFnsd_by_qty());
 						secondTableEntity.setUOM(matPackBomDtoList.get(i).getUOM());
 					}
 					if (i <= 15) {

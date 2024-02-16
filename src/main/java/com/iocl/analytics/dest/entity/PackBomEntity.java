@@ -1,6 +1,7 @@
 package com.iocl.analytics.dest.entity;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name="packbom_data",schema = "analytics_data")
@@ -13,7 +14,7 @@ public class PackBomEntity {
     private String finish_product;
     private String plant;
 
-    private String fnsd_by_Qty;
+    private String fnsd_by_qty;
 
     private String UOM;
 
@@ -122,6 +123,12 @@ public class PackBomEntity {
 
     private String uom15;
 
+    private Date valid_from;
+    private Date valid_to;
+    private Date created_on;
+
+
+
     public String getFinish_product() {
         return finish_product;
     }
@@ -138,12 +145,12 @@ public class PackBomEntity {
         this.plant = plant;
     }
 
-    public String getBy_Qty() {
-        return fnsd_by_Qty;
+    public String getFnsd_by_qty() {
+        return fnsd_by_qty;
     }
 
-    public void setBy_Qty(String by_Qty) {
-        this.fnsd_by_Qty = by_Qty;
+    public void setFnsd_by_qty(String fnsd_by_qty) {
+        this.fnsd_by_qty = fnsd_by_qty;
     }
 
     public String getUOM() {
@@ -513,5 +520,31 @@ public class PackBomEntity {
     public void setUom15(String uom15) {
         this.uom15 = uom15;
     }
+
+    public Date getValid_from() {
+        return valid_from;
+    }
+
+    public void setValid_from(Date valid_from) {
+        this.valid_from = valid_from;
+    }
+
+    public Date getValid_to() {
+        return valid_to;
+    }
+
+    public void setValid_to(Date valid_to) {
+        this.valid_to = valid_to;
+    }
+
+    public Date getCreated_on() {
+        return created_on;
+    }
+
+    public void setCreated_on(Date created_on) {
+        this.created_on = created_on;
+    }
+
+
 
 }
